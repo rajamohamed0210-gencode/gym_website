@@ -1,0 +1,79 @@
+{% extends "gym/base.html" %}
+
+{% block title %}{{ post.title }} — Realtime Gym Blog{% endblock %}
+{% block meta_desc %}{{ post.excerpt|truncatechars:160 }}{% endblock %}
+
+{% block extra_css %}
+.post-hero {
+  padding: 140px 60px 60px;
+  background: var(--dark);
+  border-bottom: 1px solid var(--border);
+  max-width: 860px;
+}
+.post-cover { width:100%; max-height:500px; object-fit:cover; display:block; }
+.post-body { display: grid; grid-template-columns: 1fr 340px; gap: 60px; padding: 80px 60px; background: var(--black); align-items: start; }
+.post-content { font-size: 1rem; line-height: 1.9; color: var(--light-grey); }
+.post-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 1px; color: var(--white); margin: 36px 0 14px; }
+.post-content h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--white); margin: 28px 0 10px; }
+.post-content p { margin-bottom: 18px; }
+.post-content strong { color: var(--white); }
+.post-sidebar { position: sticky; top: 100px; }
+.sidebar-box { background: var(--card); border: 1px solid var(--border); padding: 28px; margin-bottom: 24px; }
+.sidebar-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: .75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); margin-bottom: 20px; }
+.related-card { display: flex; gap: 14px; text-decoration: none; margin-bottom: 18px; }
+.related-card:last-child { margin-bottom: 0; }
+.related-thumb { width: 60px; height: 60px; object-fit: cover; flex-shrink: 0; }
+.related-title { font-family: 'Barlow Condensed', sans-serif; font-size: .9rem; font-weight: 700; color: var(--white); line-height: 1.3; transition: color .2s; }
+.related-card:hover .related-title { color: var(--red); }
+.related-cat { font-size: .7rem; color: var(--grey); margin-top: 4px; }
+@media (max-width: 900px) { .post-body { grid-template-columns: 1fr; } .post-sidebar { position: static; } }
+@media (max-width: 600px) { .post-hero { padding: 130px 20px 40px; } .post-body { padding: 50px 20px; } }
+{% endblock %}
+
+{% block content %}
+<div class="post-hero">
+  <div class="section-eyebrow">{{ post.category }}</div>
+  <h1 class="section-title">{{ post.title }}</h1>
+  <p style="color:var(--grey);font-size:.9rem;margin-top:16px;">{{ post.created_at|date:"d F Y" }} &bull; Realtime Gym Blog</p>
+</div>
+
+{% if post.cover_url %}
+<img class="post-cover" src="{{ post.cover_url }}" alt="{{ post.title }}" />
+{% endif %}
+
+<div class="post-body">
+  <div class="post-content">
+    {{ post.content|linebreaks }}
+    <div style="margin-top:50px;padding-top:30px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <a href="{% url 'blog' %}" class="btn-outline" style="padding:14px 30px;font-size:.8rem;">← All Articles</a>
+      <a href="{% url 'home' %}#contact" class="btn-primary" style="padding:14px 30px;font-size:.8rem;">Talk to a Trainer</a>
+    </div>
+  </div>
+  <aside class="post-sidebar">
+    {% if related %}
+    <div class="sidebar-box">
+      <div class="sidebar-title">Related Posts</div>
+      {% for r in related %}
+      <a href="{% url 'blog_detail' r.slug %}" class="related-card">
+        <img class="related-thumb" src="{% if r.cover_url %}{{ r.cover_url }}{% else %}https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=150&q=80{% endif %}" alt="{{ r.title }}" loading="lazy" />
+        <div><div class="related-title">{{ r.title }}</div><div class="related-cat">{{ r.category }}</div></div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="sidebar-box" style="background:var(--red);">
+      <div class="sidebar-title" style="color:rgba(0,0,0,.6);">Ready to Train?</div>
+      <p style="font-size:.85rem;color:rgba(0,0,0,.8);margin-bottom:20px;line-height:1.6;">Join Realtime Gym today. Plans from ₹999/month.</p>
+      <button onclick="window.location.href='{% url 'home' %}#pricing'" style="width:100%;background:var(--black);color:var(--red);border:2px solid var(--black);padding:14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Join Now</button>
+    </div>
+    <div class="sidebar-box">
+      <div class="sidebar-title">Contact Us</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <a href="tel:+919876543210" style="color:var(--white);text-decoration:none;font-size:.9rem;display:flex;align-items:center;gap:10px;"><span style="color:var(--red);">✆</span> +91 98765 43210</a>
+        <a href="https://wa.me/919876543210" target="_blank" style="color:var(--white);text-decoration:none;font-size:.9rem;display:flex;align-items:center;gap:10px;"><span style="color:#25d366;">●</span> WhatsApp Us</a>
+        <a href="https://instagram.com/realtimegym" target="_blank" style="color:var(--white);text-decoration:none;font-size:.9rem;display:flex;align-items:center;gap:10px;"><span style="color:var(--red);">◆</span> @RealtimeGym</a>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

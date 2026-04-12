@@ -1,0 +1,66 @@
+{% extends "gym/base.html" %}
+
+{% block title %}Fitness Blog — Realtime Gym, Salem{% endblock %}
+
+{% block extra_css %}
+.page-hero {
+  padding: 160px 60px 80px;
+  background: var(--dark);
+  border-bottom: 1px solid var(--border);
+}
+.blog-listing { background: var(--black); padding: 80px 60px; }
+.blog-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 60px; }
+.blog-card { background: var(--card); border: 1px solid var(--border); overflow: hidden; transition: border-color .3s; text-decoration: none; display: block; }
+.blog-card:hover { border-color: rgba(224,30,30,.4); }
+.blog-img { width:100%; height:220px; object-fit:cover; display:block; transition:transform .5s; }
+.blog-card:hover .blog-img { transform: scale(1.04); }
+.blog-body { padding: 26px; }
+.blog-cat { font-family:'Barlow Condensed',sans-serif; font-size:.65rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--red); margin-bottom:10px; }
+.blog-title { font-family:'Barlow Condensed',sans-serif; font-size:1.4rem; font-weight:700; letter-spacing:.5px; line-height:1.3; color:var(--white); margin-bottom:12px; }
+.blog-excerpt { font-size:.85rem; color:var(--grey); line-height:1.7; }
+.blog-footer { padding:16px 26px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.blog-date { font-size:.75rem; color:var(--grey); }
+.blog-read { font-family:'Barlow Condensed',sans-serif; font-size:.75rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--red); }
+.empty-state { text-align:center; padding: 80px 20px; }
+.empty-state h3 { font-family:'Bebas Neue',sans-serif; font-size:3rem; color:var(--grey); margin-bottom:16px; }
+.empty-state p { color:var(--grey); font-size:.95rem; }
+@media (max-width:900px) { .blog-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width:600px) { .page-hero { padding: 130px 20px 60px; } .blog-listing { padding: 60px 20px; } .blog-grid { grid-template-columns: 1fr; } }
+{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="section-eyebrow">Realtime Gym</div>
+  <h1 class="section-title">FITNESS<br/>BLOG</h1>
+  <p style="color:var(--grey);font-size:1rem;max-width:500px;line-height:1.7;margin-top:16px;">Tips, workouts, nutrition advice, and gym stories — straight from our trainers to you.</p>
+</div>
+
+<div class="blog-listing">
+  {% if posts %}
+    <div class="blog-grid">
+      {% for post in posts %}
+      <a href="{% url 'blog_detail' post.slug %}" class="blog-card reveal">
+        <div style="overflow:hidden;">
+          <img class="blog-img" src="{% if post.cover_url %}{{ post.cover_url }}{% else %}https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80{% endif %}" alt="{{ post.title }}" loading="lazy" />
+        </div>
+        <div class="blog-body">
+          <div class="blog-cat">{{ post.category }}</div>
+          <div class="blog-title">{{ post.title }}</div>
+          <div class="blog-excerpt">{{ post.excerpt|truncatechars:140 }}</div>
+        </div>
+        <div class="blog-footer">
+          <span class="blog-date">{{ post.created_at|date:"d M Y" }}</span>
+          <span class="blog-read">Read More →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h3>Coming Soon</h3>
+      <p>Our trainers are writing amazing content for you. Check back soon!</p>
+      <a href="{% url 'home' %}" class="btn-primary" style="margin-top:30px;display:inline-block;">Back to Home</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

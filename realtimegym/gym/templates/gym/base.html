@@ -1,0 +1,394 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}REALTIME GYM — Forge Your Legacy{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}Realtime Gym — Salem's premier fitness destination. Join now for strength training, yoga, CrossFit, personal training and more.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --black:       #050505;
+      --dark:        #0d0d0d;
+      --card:        #111111;
+      --border:      #1e1e1e;
+      --red:         #e01e1e;
+      --red-hot:     #ff2a2a;
+      --orange:      #ff6b00;
+      --white:       #f5f0eb;
+      --grey:        #888888;
+      --light-grey:  #cccccc;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background:var(--black); color:var(--white);
+      font-family:'Barlow',sans-serif; font-weight:300;
+      overflow-x:hidden;
+    }
+    ::-webkit-scrollbar { width:3px; }
+    ::-webkit-scrollbar-track { background:var(--black); }
+    ::-webkit-scrollbar-thumb { background:var(--red); }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      padding:20px 60px;
+      display:flex; align-items:center; justify-content:space-between;
+      transition:all .4s ease;
+    }
+    nav.scrolled {
+      background:rgba(5,5,5,.95);
+      backdrop-filter:blur(20px);
+      padding:14px 60px;
+      border-bottom:1px solid var(--border);
+    }
+    .nav-logo {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:2rem; letter-spacing:3px;
+      color:var(--white); text-decoration:none;
+    }
+    .nav-logo span { color:var(--red); }
+    .nav-links { display:flex; gap:40px; list-style:none; }
+    .nav-links a {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:600; font-size:.85rem; letter-spacing:2px;
+      text-transform:uppercase; color:var(--grey); text-decoration:none;
+      transition:color .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color:var(--white); }
+    .nav-cta {
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:700; font-size:.85rem; letter-spacing:2px;
+      text-transform:uppercase; color:var(--black);
+      background:var(--red); border:none; padding:12px 28px;
+      cursor:pointer; text-decoration:none; transition:background .2s;
+    }
+    .nav-cta:hover { background:var(--red-hot); }
+    .hamburger {
+      display:none; flex-direction:column; gap:5px;
+      cursor:pointer; background:none; border:none;
+    }
+    .hamburger span { display:block; width:28px; height:2px; background:var(--white); transition:all .3s; }
+    .mobile-menu {
+      display:none; position:fixed; inset:0;
+      background:var(--black); z-index:999;
+      padding:100px 40px 40px; flex-direction:column;
+    }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu .nav-links { flex-direction:column; gap:0; }
+    .mobile-menu .nav-links a {
+      font-size:1rem; padding:18px 0;
+      border-bottom:1px solid var(--border); display:block;
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding:100px 60px; }
+    .section-eyebrow {
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.75rem; font-weight:600; letter-spacing:5px;
+      text-transform:uppercase; color:var(--red);
+      margin-bottom:16px; display:flex; align-items:center; gap:12px;
+    }
+    .section-eyebrow::before {
+      content:''; display:block; width:32px; height:1px; background:var(--red);
+    }
+    .section-title {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(3rem,6vw,5.5rem);
+      line-height:.95; letter-spacing:1px; margin-bottom:20px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      font-size:.9rem; letter-spacing:2px; text-transform:uppercase;
+      color:var(--black); background:var(--red); border:2px solid var(--red);
+      padding:18px 44px; cursor:pointer; text-decoration:none;
+      display:inline-block; transition:all .25s;
+    }
+    .btn-primary:hover { background:transparent; color:var(--red); }
+    .btn-outline {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      font-size:.9rem; letter-spacing:2px; text-transform:uppercase;
+      color:var(--white); background:transparent;
+      border:2px solid rgba(255,255,255,.25); padding:18px 44px;
+      cursor:pointer; text-decoration:none; display:inline-block; transition:all .25s;
+    }
+    .btn-outline:hover { border-color:var(--white); }
+
+    /* ── FORMS ── */
+    .form-group { display:flex; flex-direction:column; gap:8px; }
+    .form-label {
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.7rem; font-weight:700; letter-spacing:2px;
+      text-transform:uppercase; color:var(--grey);
+    }
+    .form-input, .form-select, .form-textarea {
+      background:var(--dark); border:1px solid var(--border);
+      color:var(--white); padding:14px 18px;
+      font-family:'Barlow',sans-serif; font-size:.9rem;
+      outline:none; transition:border-color .2s; -webkit-appearance:none;
+    }
+    .form-textarea { resize:vertical; min-height:120px; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--red); }
+    .form-select option { background:var(--dark); }
+    .btn-submit {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      font-size:.9rem; letter-spacing:2px; text-transform:uppercase;
+      color:var(--black); background:var(--red);
+      border:2px solid var(--red); padding:18px 44px;
+      cursor:pointer; transition:all .25s; align-self:flex-start;
+    }
+    .btn-submit:hover { background:transparent; color:var(--red); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity:0; transform:translateY(40px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* ── TICKER ── */
+    .ticker-wrap { background:var(--red); padding:14px 0; overflow:hidden; white-space:nowrap; }
+    .ticker-content { display:inline-block; animation:ticker 30s linear infinite; }
+    .ticker-item {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      font-size:.85rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--black); margin-right:60px;
+    }
+    .ticker-dot {
+      display:inline-block; width:5px; height:5px;
+      background:var(--black); border-radius:50%;
+      margin-right:60px; vertical-align:middle;
+    }
+    @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+    /* ── FOOTER ── */
+    footer { background:var(--dark); border-top:1px solid var(--border); padding:70px 60px 30px; }
+    .footer-top {
+      display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+      gap:60px; margin-bottom:60px;
+    }
+    .footer-logo {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:2.2rem; letter-spacing:3px;
+      color:var(--white); margin-bottom:16px; display:block;
+    }
+    .footer-logo span { color:var(--red); }
+    .footer-about { font-size:.85rem; color:var(--grey); line-height:1.8; margin-bottom:24px; }
+    .footer-social { display:flex; gap:10px; }
+    .footer-social a {
+      width:38px; height:38px; border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--grey); text-decoration:none; font-size:.8rem; transition:all .2s;
+    }
+    .footer-social a:hover { border-color:var(--red); color:var(--red); }
+    .footer-col h4 {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      font-size:.8rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--white); margin-bottom:24px;
+    }
+    .footer-links { list-style:none; display:flex; flex-direction:column; gap:12px; }
+    .footer-links a {
+      font-size:.85rem; color:var(--grey); text-decoration:none;
+      transition:color .2s; display:flex; align-items:center; gap:8px;
+    }
+    .footer-links a::before {
+      content:''; display:block; width:16px; height:1px;
+      background:var(--red); opacity:0; transition:opacity .2s;
+    }
+    .footer-links a:hover { color:var(--white); }
+    .footer-links a:hover::before { opacity:1; }
+    .footer-bottom {
+      border-top:1px solid var(--border); padding-top:30px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .footer-copy { font-size:.8rem; color:var(--grey); }
+    .footer-copy span { color:var(--red); }
+    .back-top {
+      width:44px; height:44px; border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--grey); cursor:pointer; transition:all .2s; text-decoration:none;
+    }
+    .back-top:hover { border-color:var(--red); color:var(--red); }
+
+    /* ── WHATSAPP FLOAT ── */
+    .whatsapp-float {
+      position:fixed; bottom:30px; right:30px; z-index:900;
+      width:58px; height:58px;
+      background:#25d366; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-size:1.5rem; text-decoration:none;
+      box-shadow:0 4px 20px rgba(37,211,102,.4);
+      transition:transform .25s, box-shadow .25s;
+      animation:pulseWA 2.5s infinite;
+    }
+    .whatsapp-float:hover {
+      transform:scale(1.12);
+      box-shadow:0 6px 30px rgba(37,211,102,.6);
+    }
+    @keyframes pulseWA {
+      0%,100% { box-shadow:0 4px 20px rgba(37,211,102,.4); }
+      50%      { box-shadow:0 4px 32px rgba(37,211,102,.75); }
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(100px);
+      background:var(--card); border-left:3px solid var(--red);
+      padding:18px 28px; z-index:9999; transition:transform .4s ease;
+      min-width:280px; max-width:380px;
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast-title {
+      font-family:'Barlow Condensed',sans-serif; font-weight:700;
+      font-size:.85rem; letter-spacing:1px; text-transform:uppercase;
+      color:var(--white); margin-bottom:4px;
+    }
+    .toast-msg { font-size:.8rem; color:var(--grey); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:1100px) {
+      nav, nav.scrolled { padding:18px 30px; }
+      section { padding:80px 30px; }
+      footer { padding:60px 30px 30px; }
+      .footer-top { grid-template-columns:1fr 1fr; gap:40px; }
+    }
+    @media (max-width:768px) {
+      .nav-links, .nav-cta { display:none; }
+      .hamburger { display:flex; }
+      footer { padding:50px 20px 20px; }
+      .footer-top { grid-template-columns:1fr; }
+    }
+    @media (max-width:480px) {
+      section { padding:60px 20px; }
+    }
+
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+<body>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/919876543210?text=Hi!%20I%20want%20to%20know%20more%20about%20Realtime%20Gym"
+   class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Toast -->
+{% if messages %}
+  {% for message in messages %}
+  <div class="toast show" id="toast">
+    <div class="toast-title">{% if message.tags == 'success' %}✓ Success{% else %}⚠ Notice{% endif %}</div>
+    <div class="toast-msg">{{ message }}</div>
+  </div>
+  {% endfor %}
+{% endif %}
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="{% url 'home' %}" class="nav-logo">REALTIME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}#about">About</a></li>
+    <li><a href="{% url 'home' %}#services">Services</a></li>
+    <li><a href="{% url 'home' %}#trainers">Trainers</a></li>
+    <li><a href="{% url 'home' %}#schedule">Schedule</a></li>
+    <li><a href="{% url 'home' %}#pricing">Pricing</a></li>
+    <li><a href="{% url 'blog' %}">Blog</a></li>
+    <li><a href="{% url 'home' %}#contact">Contact</a></li>
+  </ul>
+  <a href="{% url 'home' %}#pricing" class="nav-cta">Join Now</a>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}#about" onclick="toggleMenu()">About</a></li>
+    <li><a href="{% url 'home' %}#services" onclick="toggleMenu()">Services</a></li>
+    <li><a href="{% url 'home' %}#trainers" onclick="toggleMenu()">Trainers</a></li>
+    <li><a href="{% url 'home' %}#schedule" onclick="toggleMenu()">Schedule</a></li>
+    <li><a href="{% url 'home' %}#pricing" onclick="toggleMenu()">Pricing</a></li>
+    <li><a href="{% url 'blog' %}" onclick="toggleMenu()">Blog</a></li>
+    <li><a href="{% url 'home' %}#contact" onclick="toggleMenu()">Contact</a></li>
+  </ul>
+</div>
+
+{% block content %}{% endblock %}
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <span class="footer-logo">REALTIME<span>.</span>GYM</span>
+      <p class="footer-about">Salem's premier fitness destination, dedicated to helping you forge your strongest self. Join our community and transform your life — one rep at a time.</p>
+      <div class="footer-social">
+        <a href="https://instagram.com/realtimegym" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="https://wa.me/919876543210" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul class="footer-links">
+        <li><a href="{% url 'home' %}#about">About Us</a></li>
+        <li><a href="{% url 'home' %}#services">Programs</a></li>
+        <li><a href="{% url 'home' %}#trainers">Trainers</a></li>
+        <li><a href="{% url 'home' %}#schedule">Schedule</a></li>
+        <li><a href="{% url 'blog' %}">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Membership</h4>
+      <ul class="footer-links">
+        <li><a href="{% url 'home' %}#pricing">Basic ₹999/mo</a></li>
+        <li><a href="{% url 'home' %}#pricing">Pro ₹1799/mo</a></li>
+        <li><a href="{% url 'home' %}#pricing">Elite ₹2999/mo</a></li>
+        <li><a href="{% url 'home' %}#contact">Corporate</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-links">
+        <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+        <li><a href="mailto:info@realtimegym.in">info@realtimegym.in</a></li>
+        <li><a href="#">Salem, Tamil Nadu — 636005</a></li>
+        <li><a href="https://instagram.com/realtimegym" target="_blank">@RealtimeGym</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; 2025 <span>Realtime Gym</span>. All rights reserved. Salem, Tamil Nadu.</p>
+    <a href="#" class="back-top"><i class="fas fa-arrow-up"></i></a>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+  // Hamburger
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  // Scroll reveal
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+  // Auto-hide toast
+  const toast = document.getElementById('toast');
+  if (toast) setTimeout(() => toast.classList.remove('show'), 5000);
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
