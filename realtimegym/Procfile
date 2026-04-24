@@ -1,1 +1,1 @@
-web: gunicorn realtimegym.wsgi
+web: gunicorn realtimegym.wsgi:application

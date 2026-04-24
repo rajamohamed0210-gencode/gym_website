@@ -2,6 +2,8 @@ from pathlib import Path
 import os
 import dj_database_url
 
+PORT = os.environ.get('PORT', '8000')
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key')
